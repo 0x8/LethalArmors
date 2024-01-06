@@ -13,7 +13,10 @@ feel free to point out what I did wrong and why. I'd love to learn more.
 While I'm not even close to done and am still fleshing out this idea, I wanted to credit some of the following folks whose works I'm using
 as references:
 
-Stoneman2 - For the source of LethalProgression which I'm using as a reference to better understand values related to the player: https://github.com/stoneman2/LethalProgression/
-Helo1223 - For the source of VoiceHUD which I'm using as a reference to figure out how to add a custom HUD element to indicate armor pieces: https://github.com/helo1223/LC_VoiceHUD/
-MrMiiinxx - For the general guide he recorded to making LC mods that sent me down this rabbit hole: https://www.youtube.com/watch?v=4Q7Zp5K2ywI
+- Stoneman2 - For the source of LethalProgression which I'm using as a reference to better understand values related to the player
+  - https://github.com/stoneman2/LethalProgression/
+- Helo1223 - For the source of VoiceHUD which I'm using as a reference to figure out how to add a custom HUD element to indicate armor pieces
+  - https://github.com/helo1223/LC_VoiceHUD/
+- MrMiiinxx - For the general guide he recorded to making LC mods that sent me down this rabbit hole
+  - https://www.youtube.com/watch?v=4Q7Zp5K2ywI
 
