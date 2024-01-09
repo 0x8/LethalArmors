@@ -52,7 +52,7 @@ namespace LethalArmors
         }
 
         // Handle the configuration file
-        public void BindConfig<t>(string section, string key, t defaultValue, string description = "")
+        public void BindConfig<T>(string section, string key, T defaultValue, string description = "")
         {
             Config.Bind(
                 section,

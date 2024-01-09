@@ -3,7 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.8.34330.188
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LethalArmors", "LethalArmors\LethalArmors.csproj", "{16EEE57A-384A-4037-8324-5D3F6D8D4E85}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LethalArmors", "LethalArmors\LethalArmors.csproj", "{E30838D8-906F-4632-BD90-0758B147A26B}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -11,15 +11,15 @@ Global
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{16EEE57A-384A-4037-8324-5D3F6D8D4E85}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{16EEE57A-384A-4037-8324-5D3F6D8D4E85}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{16EEE57A-384A-4037-8324-5D3F6D8D4E85}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{16EEE57A-384A-4037-8324-5D3F6D8D4E85}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E30838D8-906F-4632-BD90-0758B147A26B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E30838D8-906F-4632-BD90-0758B147A26B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E30838D8-906F-4632-BD90-0758B147A26B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E30838D8-906F-4632-BD90-0758B147A26B}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
-		SolutionGuid = {9E1CCAA0-C348-4212-A765-4CA207FC7F5A}
+		SolutionGuid = {19F0B1AC-FFFD-4CB9-820D-33853D70458B}
 	EndGlobalSection
 EndGlobal
