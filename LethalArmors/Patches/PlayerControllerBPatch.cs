@@ -39,52 +39,88 @@ using LethalArmors.Config;
 namespace LethalArmors.Patches
 {
 
-    // We need to patch the class for PlayerControllerB itself in order to track the shield values for each
     [HarmonyPatch]
-    internal class PlayerControllerBPatch
-    {
-
-
-    }
-
-    [HarmonyPatch]
-    internal class DamagePlayerPatch 
+    internal class DamagePlayer_Patch 
     {
 
         // In order to modify the damage of an attack to first consider the shields, we need to patch the PlayerControllerB.DamagePlayer method.
         // In this case, we want to use a PREFIX patch and inherit all of the variables from the original method call in order to fully override the method.
         // This is because we want to modify the damage dealt to the player before the original method is called.
+        [HarmonyPrefix]
         [HarmonyPatch(typeof(PlayerControllerB), "DamagePlayer")]
         public static void DamagePlayerWithArmor(PlayerControllerB __instance, ref int damageNumber, ref bool fallDamage)
         {
+            // Pull the damage number value into a local variable so we can modify it without messing with the original value.
+            int damage = damageNumber;
+
+            PlayerArmor playersArmor = LethalArmors.LC_ARMOR.GetPlayerArmors(__instance.playerSteamId);
+            if(playersArmor == null)
+            {
+                // No armor, No damage reduction. Just return.
+                LethalArmorsPlugin.Log.LogWarning($"No armor found for player with SteamId: {__instance.playerSteamId} . Did config syncing fail?");
+                return;
+            }
+
             if (fallDamage)
             {
                 // Check if shielding fall damage is enabled in the config
-                if (LethalArmors.Config.ArmorConfig.shieldFalls.Value)
+                if (!ArmorConfig.Instance.shieldFalls.Value)
                 {
-                    // TODO: Implement shield fall damage logic
-                } else
-                {
-                    // TODO: Implement normal fall damage logic
+                    // If shielding fall damage is disabled, we can just return here and let the original method handle it.
+                    LethalArmorsPlugin.Log.LogDebug("Shielding fall damage is disabled. Skipping damage reduction.");
+                    return;
                 }
-
-                // TODO: FIXME: How do we exit here to ensure that the original method is not called?
             }
 
-            // TODO: Implement armor damage logic
+            damage = playersArmor.TakeDamage(damage);
+
+            // Evaluate if there is remaining damage, otherwise set to 0
+            // NOTE: There's probably a much more elegant way to do this.
+            damageNumber = damage >= 0 ? damage : 0;
+            return;
 
         }
 
     }
 
     [HarmonyPatch]
-    internal class KillPlayerPatch
+    internal class KillPlayer_Patch
     {
         [HarmonyPrefix]
         [HarmonyPatch(typeof(PlayerControllerB), "KillPlayer")]
-        public static void KillPlayerWithArmor(PlayerControllerB __instance, ref int damageNumber, ref bool fallDamage)
+        public static bool KillPlayerWithArmor(PlayerControllerB __instance, ref int damageNumber, ref bool fallDamage)
         {
-            // TODO: Verify superarmor is enabled, short circuit if not. Implement SuperArmor logic
+
+            if(!ArmorConfig.Instance.superArmor.Value)
+            {
+                // If super armor is disabled, we can just return here and let the original method handle it.
+                LethalArmorsPlugin.Log.LogDebug("Super Armor is disabled. Skipping super armor check.");
+                return true;
+            }
+
+            PlayerArmor playersArmor = LethalArmors.LC_ARMOR.GetPlayerArmors(__instance.playerSteamId);
+            if (playersArmor == null)
+            {
+                // No armor, No damage reduction. Just return.
+                LethalArmorsPlugin.Log.LogWarning($"No armor found for player with SteamId: {__instance.playerSteamId} . Did config syncing fail?");
+                return true;
+            }
+
+            if (playersArmor.GetSuperPlateCount() <= 0) {
+                
+                // If the player has no super armor, we can just return here and let the original method handle it.
+                LethalArmorsPlugin.Log.LogDebug("Player has no super armor. Resuming kill command.");
+                return true;
+            }
+
+            // If the player has super armor, we decrement it
+            LethalArmorsPlugin.Log.LogDebug("Player has super armor. Skipping kill command.");
+            playersArmor.BreakArmorPlate(ArmorType.Super);
+
+            // returning false will skip the original method call
+            return false;
+
         }
     }
+
 }
