@@ -16,6 +16,9 @@ using HarmonyLib;
 using UnityEngine;
 using UnityEngine.Networking;
 
+// Internal Refs from Lethal Company Directory DLLs.
+using LethalArmors.Config;
+
 namespace LethalArmors
 {
     [BepInPlugin(modGUID, modName, modVersion)]
@@ -25,7 +28,8 @@ namespace LethalArmors
         private const String modGUID = "kinou.LethalArmors";
         private const String modName = "Lethal Armors";
         private const String modVersion = "1.0.0";
-        public static AssetBundle armorBundle;
+        public static new ArmorConfig LethalArmorConfig { get; internal set; }
+        public static AssetBundle armorBundle;  // FIXME: Do we even need this?
 
         // Logger and Instance information
         internal static ManualLogSource Log;
@@ -41,7 +45,8 @@ namespace LethalArmors
             {
                 Instance = this;
             }
-            
+
+            LethalArmorConfig = new(base.Config); 
             harmony.PatchAll(typeof(LethalArmorsPlugin));
 
             Log = Logger;

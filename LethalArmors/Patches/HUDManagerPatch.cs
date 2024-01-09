@@ -11,6 +11,10 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
+
+// We'll try to patch the HUDManager to display the armor pieces to each player.
+// TODO: Implement me!
+
 namespace LethalArmors.Patches
 {
     [HarmonyPatch]

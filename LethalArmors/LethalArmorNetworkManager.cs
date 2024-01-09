@@ -9,6 +9,7 @@ using Unity.Netcode;
 using HarmonyLib;
 using UnityEngine;
 
+// FIXME: We may not need this at all? I'll try to figure it out.
 namespace LethalArmors
 {
     [HarmonyPatch]

@@ -10,6 +10,8 @@ using LethalArmors.Config;
 
 namespace LethalArmors
 {
+
+    // I'm not totally sure what I want to do here yet.
     internal class LC_ARMOR : NetworkBehaviour
     {
 
