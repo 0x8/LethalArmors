@@ -20,12 +20,15 @@ namespace LethalArmors
         internal static bool IsHost => NetworkManager.Singleton.IsHost;
 
         [NonSerialized]
-        protected static int IntSize = 4;
+        protected static int INT_SIZE = 4;
+
+        [NonSerialized]
+        static readonly DataContractSerializer serializer = new(typeof(T));
         
         public static T Default { get; private set; }
         public static T Instance { get; private set; }
-        
-        public static bool Synced { get; internal set; }
+
+        internal static bool Synced;
 
         protected void InitInstance(T instance)
         {
@@ -34,7 +37,7 @@ namespace LethalArmors
 
             // Assume default int size of 4 but verify with system
             // Most systems will use 4 byte ints.
-            IntSize = sizeof(int);
+            INT_SIZE = sizeof(int);
         }
 
         internal static void SyncInstance(byte[] data)
@@ -52,16 +55,15 @@ namespace LethalArmors
         [Obsolete]
         public static byte[] SerializeToBytes(T val)
         {
-            BinaryFormatter bf = new();
             using MemoryStream stream = new();
 
             try {
-                bf.Serialize(stream, val);
+                serializer.WriteObject(stream, val);
                 return stream.ToArray();
             }
             catch (Exception e) {
                 LethalArmorsPlugin.Log.LogError($"Failed to serialize instance: {e}");
-                return default;
+                return null;
             }
 
         }
@@ -69,17 +71,31 @@ namespace LethalArmors
         [Obsolete]
         public static T DeserializeFromBytes(byte[] data) 
         {
-
-            BinaryFormatter bf = new();
             using MemoryStream stream = new(data);
 
             try {
-                return (T) bf.Deserialize(stream);
+                return (T) serializer.ReadObject(stream);
             } catch (Exception e)
             {
                 LethalArmorsPlugin.Log.LogError($"Failed to deserialize instance: {e}");
                 return default;
             }
+        }
+
+        internal static void SendMessage(string label, ulong clientId, FastBufferWriter stream)
+        {
+            bool fragment = stream.Capacity > stream.MaxCapacity;
+            NetworkDelivery delivery = fragment ? NetworkDelivery.ReliableFragmentedSequenced : NetworkDelivery.Reliable;
+
+            if(fragment)
+            {
+                LethalArmorsPlugin.Log.LogDebug(
+                    $"Size of stream ({stream.Capacity}) was past the max buffer size.\n" +
+                    "Config instance will be sent in framents to avoid overflowing the buffer."
+                );
+            }
+
+            MessageManager.SendNamedMessage(label, clientId, stream, delivery);
         }
 
     }
