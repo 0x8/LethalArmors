@@ -86,7 +86,7 @@ namespace LethalArmors.Patches
     {
         [HarmonyPrefix]
         [HarmonyPatch(typeof(PlayerControllerB), "KillPlayer")]
-        public static bool KillPlayerWithArmor(PlayerControllerB __instance, ref int damageNumber, ref bool fallDamage)
+        public static bool KillPlayerWithArmor(PlayerControllerB __instance)
         {
 
             if(!LethalArmorsPlugin.Config.superArmor)
@@ -124,7 +124,7 @@ namespace LethalArmors.Patches
     internal class connectClientToPlayerObject_Patch
     {
         [HarmonyPostfix]
-        [HarmonyPatch(typeof(PlayerControllerB), "connectClientToPlayerObject")]
+        [HarmonyPatch(typeof(PlayerControllerB), "ConnectClientToPlayerObject")]
         public static void InitializeLocalPlayer(PlayerControllerB __instance)
         {
             ulong playerSteamId = __instance.playerSteamId;

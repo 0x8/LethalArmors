@@ -66,12 +66,25 @@ namespace LethalArmors
 
     internal class PlayerArmor
     {
-        ulong playerSteamId;
-        Dictionary<ArmorType, List<ArmorPlate>> armorPlates = new Dictionary<ArmorType, List<ArmorPlate>>();
+        private ulong playerSteamId;
+        public bool initialized = false;
+        private Dictionary<ArmorType, List<ArmorPlate>> armorPlates = new Dictionary<ArmorType, List<ArmorPlate>>();
+
+        public PlayerArmor(ulong steamID)
+        {
+            playerSteamId = steamID;
+            armorPlates[ArmorType.Regular] = new List<ArmorPlate>();
+            armorPlates[ArmorType.Super] = new List<ArmorPlate>();
+        }
 
         public ulong GetPlayerSteamId()
         {
             return playerSteamId;
+        }
+
+        public void SetPlayerSteamId(ulong steamId)
+        {
+            playerSteamId = steamId;
         }
 
         public void AddRegularArmorPlate()
@@ -152,18 +165,22 @@ namespace LethalArmors
         // Initialize the playerArmorsList
         public void Start()
         {
-            // TODO: Initialize the playerArmorsList for all players
+            playerArmorsList = new();
             PlayerConnect_ServerRpc();
         }
 
         [ServerRpc(RequireOwnership = false)]
         public void PlayerConnect_ServerRpc()
         {
+            // Does this run when a player connects?
+            LethalArmorsPlugin.Log.LogInfo("PlayerConnect_ServerRpc called");
             return;
         }
 
         internal static PlayerArmor GetPlayerArmors(ulong playerSteamId)
         {
+            LethalArmorsPlugin.Log.LogInfo($"Getting armor for player with SteamId: {playerSteamId}");
+
             PlayerArmor playersArmor = playerArmorsList[playerSteamId];
             if (playersArmor.GetPlayerSteamId == null)
             {
@@ -179,6 +196,14 @@ namespace LethalArmors
         // for the player accordingly.
         internal static void InitializeArmorsFromConfig(ulong playerSteamId)
         {
+            // I can probably refactor how the playerArmorsList is initialized, but I'm just gonna get it working for now.
+            if (playerArmorsList == null)
+            {
+                LethalArmorsPlugin.Log.LogInfo("Initializing playerArmorsList");
+                playerArmorsList = new Dictionary<ulong, PlayerArmor>();
+                playerArmorsList[playerSteamId] = new PlayerArmor(playerSteamId);
+            }
+
             if (LethalArmorsPlugin.Config.startWithRegularPlates)
             {   
                 LethalArmorsPlugin.Log.LogInfo($"Adding {LethalArmorsPlugin.Config.regularPlateStartCount} regular armor plates for player with SteamId: {playerSteamId}");

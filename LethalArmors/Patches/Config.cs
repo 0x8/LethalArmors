@@ -6,16 +6,13 @@ using HarmonyLib;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Runtime.Serialization;
 using System.Text;
 using System.Threading.Tasks;
-using TerminalApi;
 using Unity.Collections;
 using Unity.Netcode;
 
 namespace LethalArmors
 {
-    [DataContract]
     public class Config
     {
         // Config Entry refs
@@ -29,17 +26,17 @@ namespace LethalArmors
         public ConfigEntry<bool> startWithSuperArmorPlatesConfig;
         public ConfigEntry<int> superArmorPlateStartCountConfig;
 
-        [DataMember] public int armorValue { get; private set;}
-        [DataMember] public int armorCost { get; private set; } 
-        [DataMember] public bool shieldFalls { get; private set; }
-        [DataMember] public bool superArmor { get; private set; }
-        [DataMember] public int superArmorCost { get; private set; }
+        public int armorValue { get; private set;}
+        public int armorCost { get; private set; } 
+        public bool shieldFalls { get; private set; }
+        public bool superArmor { get; private set; }
+        public int superArmorCost { get; private set; }
 
         // DEBUG options for quick testing mostly
-        [DataMember] public bool startWithRegularPlates { get; private set; }
-        [DataMember] public int regularPlateStartCount { get; private set; }
-        [DataMember] public bool startWithSuperArmorPlates { get; private set; }
-        [DataMember] public int superArmorPlateStartCount { get; private set; }
+        public bool startWithRegularPlates { get; private set; }
+        public int regularPlateStartCount { get; private set; }
+        public bool startWithSuperArmorPlates { get; private set; }
+        public int superArmorPlateStartCount { get; private set; }
 
         public Config(ConfigFile cfg)
         {
