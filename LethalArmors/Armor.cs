@@ -28,7 +28,7 @@ namespace LethalArmors
         {
             if (armorType == ArmorType.Regular)
             {
-                Health = Config.Instance.armorValue;
+                Health = LethalArmorsPlugin.Config.armorValue;
                 LethalArmorsPlugin.Log.LogInfo($"Created new Regular Plate with {Health} health");
             }
             else if (armorType == ArmorType.Super)
@@ -172,6 +172,37 @@ namespace LethalArmors
             } else
             {
                 return playersArmor;
+            }
+        }
+
+        // Called when a player connects to the server. This should check the debug values and add any initial armor plates
+        // for the player accordingly.
+        internal static void InitializeArmorsFromConfig(ulong playerSteamId)
+        {
+            if (LethalArmorsPlugin.Config.startWithRegularPlates)
+            {   
+                LethalArmorsPlugin.Log.LogInfo($"Adding {LethalArmorsPlugin.Config.regularPlateStartCount} regular armor plates for player with SteamId: {playerSteamId}");
+                for (int i = 0; i < LethalArmorsPlugin.Config.regularPlateStartCount; i++)
+                {
+                    GetPlayerArmors(playerSteamId).AddRegularArmorPlate();
+                }
+                
+                // Verify the values after adding the plates so we know if something done goofed.
+                LethalArmorsPlugin.Log.LogInfo($"Expected number of regular armor plates for [{playerSteamId} is [{LethalArmorsPlugin.Config.regularPlateStartCount}]");
+                LethalArmorsPlugin.Log.LogInfo($"Actual number of regular armor plates for [{playerSteamId} is [{GetPlayerArmors(playerSteamId).GetRegularPlateCount()}]");
+            }
+
+            if (LethalArmorsPlugin.Config.startWithSuperArmorPlates)
+            {
+                LethalArmorsPlugin.Log.LogInfo($"Adding {LethalArmorsPlugin.Config.superArmorPlateStartCount} super armor plates for player with SteamId: {playerSteamId}");
+                for (int i = 0; i < LethalArmorsPlugin.Config.superArmorPlateStartCount; i++)
+                {
+                    GetPlayerArmors(playerSteamId).AddSuperArmorPlate();
+                }
+
+                // Verify the values after adding the plates so we know if something done goofed.
+                LethalArmorsPlugin.Log.LogInfo($"Expected number of super armor plates for [{playerSteamId} is [{LethalArmorsPlugin.Config.superArmorPlateStartCount}]");
+                LethalArmorsPlugin.Log.LogInfo($"Actual number of super armor plates for [{playerSteamId} is [{GetPlayerArmors(playerSteamId).GetSuperPlateCount()}]");
             }
         }
     }

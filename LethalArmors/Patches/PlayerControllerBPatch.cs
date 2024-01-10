@@ -62,7 +62,7 @@ namespace LethalArmors.Patches
             if (fallDamage)
             {
                 // Check if shielding fall damage is enabled in the config
-                if (!Config.Instance.shieldFalls)
+                if (!LethalArmorsPlugin.Config.shieldFalls)
                 {
                     // If shielding fall damage is disabled, we can just return here and let the original method handle it.
                     LethalArmorsPlugin.Log.LogDebug("Shielding fall damage is disabled. Skipping damage reduction.");
@@ -89,7 +89,7 @@ namespace LethalArmors.Patches
         public static bool KillPlayerWithArmor(PlayerControllerB __instance, ref int damageNumber, ref bool fallDamage)
         {
 
-            if(!Config.Instance.superArmor)
+            if(!LethalArmorsPlugin.Config.superArmor)
             {
                 // If super armor is disabled, we can just return here and let the original method handle it.
                 LethalArmorsPlugin.Log.LogDebug("Super Armor is disabled. Skipping super armor check.");
@@ -118,6 +118,21 @@ namespace LethalArmors.Patches
             // returning false will skip the original method call
             return false;
 
+        }
+    }
+    [HarmonyPatch]
+    internal class connectClientToPlayerObject_Patch
+    {
+        [HarmonyPostfix]
+        [HarmonyPatch(typeof(PlayerControllerB), "connectClientToPlayerObject")]
+        public static void InitializeLocalPlayer(PlayerControllerB __instance)
+        {
+            ulong playerSteamId = __instance.playerSteamId;
+
+            // Initialize the player's armor values based on the config
+            LethalArmorsPlugin.Log.LogInfo($"Initializing armor values for player SteamId: {playerSteamId}");
+            LC_ARMOR.InitializeArmorsFromConfig(playerSteamId);
+            LethalArmorsPlugin.Log.LogInfo($"Finished initializing player SteamId: {playerSteamId}");
         }
     }
 
