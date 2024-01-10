@@ -1,0 +1,9 @@
+{
+    "name": "LethalArmors",
+    "version_number": "1.0.0",
+    "website_url": "https://github.com/0x8/lc_armor_mod/",
+    "description": "Armor plates for some heavy combat",
+    "dependencies": [
+        "BepInEx-BepInExPack-5.4.2100"
+    ]
+}
