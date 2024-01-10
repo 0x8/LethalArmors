@@ -22,9 +22,6 @@ namespace LethalArmors
             if (armorNetworkObject != null)
                 return;
 
-            armorNetworkObject = (GameObject)LethalArmorsPlugin.armorBundle.LoadAsset("LA_ArmorHandler");
-            armorNetworkObject.AddComponent<LC_ARMOR>();
-
         }
 
         public static GameObject armorNetworkObject;
