@@ -16,7 +16,7 @@ using LethalArmors;
 
 namespace LethalArmors.Patches
 {
-    [HarmonyPatch]
+    //[HarmonyPatch]
     internal class HUDManagerPatch
     {
         private static GameObject armorBar;

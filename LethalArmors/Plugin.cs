@@ -46,11 +46,18 @@ namespace LethalArmors
 
             Log.LogInfo("Passed Instance Check, trying to generate config...");
 
-            Config = new(base.Config); 
-            harmony.PatchAll(typeof(LethalArmorsPlugin));
+            Config = new(base.Config);
 
-            Log.LogInfo("Lethal Armors loaded.");
-
+            try
+            {
+                harmony.PatchAll();
+                Log.LogInfo("Lethal Armors loaded.");
+            }
+            catch (Exception e)
+            {
+                Log.LogError("Failed to load Lethal Armors");
+                Log.LogError(e);
+            }
         }
 
     }
