@@ -5,7 +5,6 @@ using System.Text;
 using System.Threading.Tasks;
 using Unity.Netcode;
 
-using LethalArmors.Config;
 using System.Transactions;
 using BepInEx.Logging;
 
@@ -29,7 +28,7 @@ namespace LethalArmors
         {
             if (armorType == ArmorType.Regular)
             {
-                Health = ArmorConfig.Instance.armorValue.Value;
+                Health = Config.Instance.armorValue;
                 LethalArmorsPlugin.Log.LogInfo($"Created new Regular Plate with {Health} health");
             }
             else if (armorType == ArmorType.Super)

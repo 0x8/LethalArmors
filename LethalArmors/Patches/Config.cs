@@ -12,24 +12,24 @@ using TerminalApi;
 using Unity.Collections;
 using Unity.Netcode;
 
-namespace LethalArmors.Config
+namespace LethalArmors
 {
     [DataContract]
-    public class ArmorConfig : SyncedInstance<ArmorConfig>
+    public class Config : SyncedInstance<Config>
     {
-        [DataMember] public ConfigEntry<int> armorValue;
-        [DataMember] public ConfigEntry<int> armorCost;
-        [DataMember] public ConfigEntry<bool> shieldFalls;
-        [DataMember] public ConfigEntry<bool> superArmor;
-        [DataMember] public ConfigEntry<int> superArmorCost;
+        [DataMember] public int armorValue { get; private set;}
+        [DataMember] public int armorCost { get; private set; } 
+        [DataMember] public bool shieldFalls { get; private set; }
+        [DataMember] public bool superArmor { get; private set; }
+        [DataMember] public int superArmorCost { get; private set; }
 
         // DEBUG options for quick testing mostly
-        [DataMember] public ConfigEntry<bool> startWithRegularPlates;
-        [DataMember] public ConfigEntry<int> regularPlateStartCount;
-        [DataMember] public ConfigEntry<bool> startWithSuperArmorPlates;
-        [DataMember] public ConfigEntry<int> superArmorPlateStartCount;
+        [DataMember] public bool startWithRegularPlates { get; private set; }
+        [DataMember] public int regularPlateStartCount { get; private set; }
+        [DataMember] public bool startWithSuperArmorPlates { get; private set; }
+        [DataMember] public int superArmorPlateStartCount { get; private set; }
 
-        public ArmorConfig(ConfigFile cfg)
+        public Config(ConfigFile cfg)
         {
             InitInstance(this);
 
@@ -39,35 +39,35 @@ namespace LethalArmors.Config
                 "Armor Value",
                 25,
                 "How much health each piece of armor should have"
-            );
+            ).Value;
 
             armorCost = cfg.Bind(
                 "General",
                 "Armor Piece Cost",
                 75,
                 "How much each piece of armor should cost."
-            );
+            ).Value;
 
             shieldFalls = cfg.Bind(
                 "General",
                 "Shield Fall Damage",
                 false,
                 "Whether or not armor should absorb fall damage."
-            );
+            ).Value;
 
             superArmor = cfg.Bind(
                 "General",
                 "Super Armor",
                 false,
                 "Whether or not the player should be able to buy Super Armor plates. Each plate prevents one instance of instant kill mechanic."
-            );
+            ).Value;
 
             superArmorCost = cfg.Bind(
                 "General",
                 "Super Armor Cost",
                 100,
                 "How much super armor should cost."
-            );
+            ).Value;
 
             // DEBUG OPTIONS
             startWithRegularPlates = cfg.Bind(
@@ -75,28 +75,28 @@ namespace LethalArmors.Config
                 "Start With Regular Plates",
                 false,
                 "Whether or not the player should start with regular armor plates."
-            );
+            ).Value;
 
             regularPlateStartCount = cfg.Bind(
                 "Debug",
                 "Regular Plate Start Count",
                 4,
                 "How many regular armor plates the player should start with."
-            );
+            ).Value;
 
             startWithSuperArmorPlates = cfg.Bind(
                 "Debug",
                 "Start With Super Armor Plates",
                 false,
                 "Whether or not the player should start with super armor plates."
-            );
+            ).Value;
 
             superArmorPlateStartCount = cfg.Bind(
                 "Debug",
                 "Super Armor Plate Start Count",
                 1,
                 "How many super armor plates the player should start with."
-            );
+            ).Value;
 
         }
 
@@ -104,7 +104,7 @@ namespace LethalArmors.Config
         {
             if (!IsClient) return;
 
-            using FastBufferWriter stream = new(INT_SIZE, Allocator.Temp);
+            using FastBufferWriter stream = new(IntSize, Allocator.Temp);
             SendMessage("LethalArmors_OnRequestConfigSync", 0uL, stream);
         }
 
@@ -117,7 +117,7 @@ namespace LethalArmors.Config
             byte[] array = SerializeToBytes(Instance);
             int value = array.Length;
 
-            using FastBufferWriter stream = new(value + INT_SIZE, Allocator.Temp);
+            using FastBufferWriter stream = new(value + IntSize, Allocator.Temp);
 
             try
             {
@@ -134,7 +134,7 @@ namespace LethalArmors.Config
 
         public static void OnReceiveSync(ulong _, FastBufferReader reader)
         {
-            if (!reader.TryBeginRead(INT_SIZE))
+            if (!reader.TryBeginRead(IntSize))
             {
                 LethalArmorsPlugin.Log.LogError("Config sync error: Could not begin reading buffer.");
                 return;
@@ -179,7 +179,7 @@ namespace LethalArmors.Config
         [HarmonyPatch(typeof(GameNetworkManager), "StartDisconnect")]
         public static void PlayerLeave()
         {
-            ArmorConfig.RevertSync();
+            Config.RevertSync();
         }
 
     }

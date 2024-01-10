@@ -20,7 +20,7 @@ namespace LethalArmors
         internal static bool IsHost => NetworkManager.Singleton.IsHost;
 
         [NonSerialized]
-        protected static int INT_SIZE = 4;
+        protected static int IntSize = 4;
 
         [NonSerialized]
         static readonly DataContractSerializer serializer = new(typeof(T));
@@ -35,9 +35,8 @@ namespace LethalArmors
             Default = instance;
             Instance = instance;
 
-            // Assume default int size of 4 but verify with system
-            // Most systems will use 4 byte ints.
-            INT_SIZE = sizeof(int);
+            // Ensure the size of an integer is correct for the current system.
+            IntSize = sizeof(int);
         }
 
         internal static void SyncInstance(byte[] data)
@@ -52,7 +51,6 @@ namespace LethalArmors
             Synced = false;
         }
 
-        [Obsolete]
         public static byte[] SerializeToBytes(T val)
         {
             using MemoryStream stream = new();
@@ -62,13 +60,12 @@ namespace LethalArmors
                 return stream.ToArray();
             }
             catch (Exception e) {
-                LethalArmorsPlugin.Log.LogError($"Failed to serialize instance: {e}");
+                LethalArmorsPlugin.Log.LogError($"Error serializing instance: {e}");
                 return null;
             }
 
         }
 
-        [Obsolete]
         public static T DeserializeFromBytes(byte[] data) 
         {
             using MemoryStream stream = new(data);

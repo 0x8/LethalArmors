@@ -1,14 +1,12 @@
-﻿using GameNetcodeStuff;
-using HarmonyLib;
-using Unity.Netcode;
-
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using LethalArmors.Config;
 
+using GameNetcodeStuff;
+using HarmonyLib;
+using Unity.Netcode;
 
 /* 
     
@@ -64,7 +62,7 @@ namespace LethalArmors.Patches
             if (fallDamage)
             {
                 // Check if shielding fall damage is enabled in the config
-                if (!ArmorConfig.Instance.shieldFalls.Value)
+                if (!Config.Instance.shieldFalls)
                 {
                     // If shielding fall damage is disabled, we can just return here and let the original method handle it.
                     LethalArmorsPlugin.Log.LogDebug("Shielding fall damage is disabled. Skipping damage reduction.");
@@ -91,7 +89,7 @@ namespace LethalArmors.Patches
         public static bool KillPlayerWithArmor(PlayerControllerB __instance, ref int damageNumber, ref bool fallDamage)
         {
 
-            if(!ArmorConfig.Instance.superArmor.Value)
+            if(!Config.Instance.superArmor)
             {
                 // If super armor is disabled, we can just return here and let the original method handle it.
                 LethalArmorsPlugin.Log.LogDebug("Super Armor is disabled. Skipping super armor check.");
