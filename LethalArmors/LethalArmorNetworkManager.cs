@@ -19,11 +19,11 @@ namespace LethalArmors
         [HarmonyPatch(typeof(GameNetworkManager), "Start")]
         public static void Init()
         {
-            if (armorNetworkObject != null)
-                return;
-
+            //DEBUG
+            LethalArmorsPlugin.Log.LogInfo("Entered LethalArmorNetworkManager.Init()");
+            LethalArmors.LC_ARMOR PlayerArmors = new();
+            PlayerArmors.Start();
         }
 
-        public static GameObject armorNetworkObject;
     }
 }

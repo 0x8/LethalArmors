@@ -36,19 +36,20 @@ namespace LethalArmors
 
         private void Awake()
         {
-            Log = Logger;
+           Log = Logger;
+           Log.LogInfo("Entered Awake()");
 
-            // Verify whether the instance exists, create a new one if not.
-            if (Instance == null)
-            {
-                Instance = this;
-            }
+           // Verify whether the instance exists, create a new one if not.
+           if (Instance == null)
+           {
+               Instance = this;
+           }
 
-            Log.LogInfo("Passed Instance Check, trying to generate config...");
+           Log.LogInfo("Passed Instance Check, trying to generate config...");
 
-            Config = new(base.Config);
+           Config = new(base.Config);
 
-            try
+           try
             {
                 harmony.PatchAll();
                 Log.LogInfo("Lethal Armors loaded.");

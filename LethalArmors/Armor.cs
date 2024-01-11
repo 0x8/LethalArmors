@@ -1,5 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
+using System.Collections;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -25,15 +25,19 @@ namespace LethalArmors
         private bool _isBroken = false;
 
         public ArmorPlate(ArmorType armorType)
-        {
+        { 
+            LethalArmorsPlugin.Log.LogInfo($"Creating new Armor Plate of type {armorType}");
+
             if (armorType == ArmorType.Regular)
             {
                 Health = LethalArmorsPlugin.Config.armorValue;
+                plateType = ArmorType.Regular;
                 LethalArmorsPlugin.Log.LogInfo($"Created new Regular Plate with {Health} health");
             }
             else if (armorType == ArmorType.Super)
             {
                 Health = null;
+                plateType = ArmorType.Super;
                 LethalArmorsPlugin.Log.LogInfo("Created new Super Plate");
             }
         }
@@ -72,6 +76,8 @@ namespace LethalArmors
 
         public PlayerArmor(ulong steamID)
         {
+            LethalArmorsPlugin.Log.LogInfo($"Creating new PlayerArmor for player with SteamId: {steamID}");
+
             playerSteamId = steamID;
             armorPlates[ArmorType.Regular] = new List<ArmorPlate>();
             armorPlates[ArmorType.Super] = new List<ArmorPlate>();
@@ -165,11 +171,12 @@ namespace LethalArmors
         // Initialize the playerArmorsList
         public void Start()
         {
+            LethalArmorsPlugin.Log.LogInfo("Entered LC_ARMOR.Start()");
+
             playerArmorsList = new();
             PlayerConnect_ServerRpc();
         }
 
-        [ServerRpc(RequireOwnership = false)]
         public void PlayerConnect_ServerRpc()
         {
             // Does this run when a player connects?

@@ -46,8 +46,11 @@ namespace LethalArmors.Patches
         // This is because we want to modify the damage dealt to the player before the original method is called.
         [HarmonyPrefix]
         [HarmonyPatch(typeof(PlayerControllerB), "DamagePlayer")]
-        public static void DamagePlayerWithArmor(PlayerControllerB __instance, ref int damageNumber, ref bool fallDamage)
+        public static bool DamagePlayerWithArmor(PlayerControllerB __instance, ref int damageNumber, ref bool fallDamage, ref CauseOfDeath causeOfDeath)
         {
+
+            LethalArmorsPlugin.Log.LogDebug("Entered DamagePlayerWithArmor()");
+
             // Pull the damage number value into a local variable so we can modify it without messing with the original value.
             int damage = damageNumber;
 
@@ -56,7 +59,7 @@ namespace LethalArmors.Patches
             {
                 // No armor, No damage reduction. Just return.
                 LethalArmorsPlugin.Log.LogWarning($"No armor found for player with SteamId: {__instance.playerSteamId} . Did config syncing fail?");
-                return;
+                return true;
             }
 
             if (fallDamage)
@@ -66,7 +69,7 @@ namespace LethalArmors.Patches
                 {
                     // If shielding fall damage is disabled, we can just return here and let the original method handle it.
                     LethalArmorsPlugin.Log.LogDebug("Shielding fall damage is disabled. Skipping damage reduction.");
-                    return;
+                    return true;
                 }
             }
 
@@ -74,8 +77,9 @@ namespace LethalArmors.Patches
 
             // Evaluate if there is remaining damage, otherwise set to 0
             // NOTE: There's probably a much more elegant way to do this.
+            // NOTE: Should I just skip the function if the remaining damage is 0? Will that cause issues?
             damageNumber = damage >= 0 ? damage : 0;
-            return;
+            return true;
 
         }
 
@@ -88,6 +92,8 @@ namespace LethalArmors.Patches
         [HarmonyPatch(typeof(PlayerControllerB), "KillPlayer")]
         public static bool KillPlayerWithArmor(PlayerControllerB __instance)
         {
+
+            LethalArmorsPlugin.Log.LogDebug("Entered KillPlayerWithArmor()");
 
             if(!LethalArmorsPlugin.Config.superArmor)
             {
@@ -127,6 +133,8 @@ namespace LethalArmors.Patches
         [HarmonyPatch(typeof(PlayerControllerB), "ConnectClientToPlayerObject")]
         public static void InitializeLocalPlayer(PlayerControllerB __instance)
         {
+            LethalArmorsPlugin.Log.LogInfo("Entered InitializeLocalPlayer()");
+
             ulong playerSteamId = __instance.playerSteamId;
 
             // Initialize the player's armor values based on the config
