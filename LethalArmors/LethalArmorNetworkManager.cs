@@ -22,14 +22,14 @@ namespace LethalArmors
         [HarmonyPatch(typeof(GameNetworkManager), "Start")]
         public static void Init()
         {
-            LethalArmorsPlugin.Log.LogDebug("Entered LethalArmorNetworkManager.Init()");
+            LethalArmorsPlugin.Log.LogInfo("Entered LethalArmorNetworkManager.Init()");
             
             // Check whether the network object is already instantiated
             if(armorNetworkObject != null)
                 return;
 
-            LethalArmorsPlugin.Log.LogDebug("armorNetworkObject is null, instantiating...");
-            armorNetworkObject = new GameObject("LethalArmorHandler");
+            LethalArmorsPlugin.Log.LogInfo("armorNetworkObject is null, instantiating...");
+            armorNetworkObject =  (GameObject)LethalArmorsPlugin.armorBundle.LoadAsset("LethalArmorHandler");
             armorNetworkObject.AddComponent<LethalArmorNetworkHandler>();
             NetworkManager.Singleton.AddNetworkPrefab(armorNetworkObject);
             

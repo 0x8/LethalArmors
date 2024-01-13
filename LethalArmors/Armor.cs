@@ -1,6 +1,7 @@
 ﻿using Microsoft.VisualBasic;
 using System;
 using System.Collections;
+using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -38,6 +39,14 @@ namespace LethalArmors
             return playerArmor;
         }
 
+        public override void OnNetworkSpawn()
+        {
+            if (NetworkManager.Singleton.IsHost || NetworkManager.Singleton.IsServer)
+                Instance?.gameObject.GetComponent<NetworkObject>().Despawn();
+            Instance = this;
+            base.OnNetworkSpawn();
+        }
+
         /////////////
         /// RPC Stuff
 
@@ -45,16 +54,24 @@ namespace LethalArmors
         public void PlayerConnect_ServerRpc()
         {
             // Does this run when a player connects?
-            LethalArmorsPlugin.Log.LogDebug("PlayerConnect_ServerRpc called");
+            LethalArmorsPlugin.Log.LogInfo("PlayerConnect_ServerRpc called");
             IDictionary<string, string> playerConfigs = LethalArmorsPlugin.Instance.GetAllConfigEntries();
+            LethalArmorsPlugin.Log.LogInfo($"Loaded playerConfigs: {playerConfigs}");
             string serializedConfig = JsonConvert.SerializeObject(playerConfigs);
+            // DEBUG because I'm desperate
+            foreach(KeyValuePair<string, string> entry in playerConfigs)
+            {
+                LethalArmorsPlugin.Log.LogInfo($"Added {entry.Key}: {entry.Value} to playerConfigs");
+            }
+
             SendConfigsClientRpc(serializedConfig);
         }
 
         [ClientRpc]
         public void SendConfigsClientRpc(string serializedConfig)
         {
-            IDictionary<string, string> playerConfigs = new Dictionary<string, string>();
+
+            IDictionary<string, string> playerConfigs = JsonConvert.DeserializeObject<IDictionary<string, string>>(serializedConfig);
             foreach (KeyValuePair<string, string> entry in playerConfigs)
             {
                 ArmorConfig.hostConfig[entry.Key] = entry.Value;
