@@ -1,4 +1,4 @@
-# Lethal Armor
+# Lethal Armors
 
 This mod intends to add buyable armor for the player to increase their survivability among the normal maximum threshold.
 
