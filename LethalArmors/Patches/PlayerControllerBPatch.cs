@@ -52,7 +52,7 @@ namespace LethalArmors.Patches
         public static bool DamagePlayerWithArmor(PlayerControllerB __instance, ref int damageNumber, ref bool fallDamage, ref CauseOfDeath causeOfDeath)
         {
 
-            LethalArmorsPlugin.Log.LogDebug("Entered DamagePlayerWithArmor()");
+            LethalArmorsPlugin.Log.LogInfo("Entered DamagePlayerWithArmor()");
 
             // Pull the damage number value into a local variable so we can modify it without messing with the original value.
             int damage = damageNumber;
@@ -64,18 +64,25 @@ namespace LethalArmors.Patches
                 LethalArmorsPlugin.Log.LogWarning($"No armor found for player with SteamId: {__instance.playerSteamId} . Did config syncing fail?");
                 return true;
             }
+            LethalArmorsPlugin.Log.LogInfo("Found player armor for instance.");
+            LethalArmorsPlugin.Log.LogInfo($"Player has {playersArmor.GetRegularPlateCount()} regular plates and {playersArmor.GetSuperPlateCount()} super plates.");
 
             if (fallDamage)
             {
+                LethalArmorsPlugin.Log.LogInfo("Determined the damage source is fall damage.");
+
                 // Check if shielding fall damage is enabled in the config
-                if (bool.Parse(ArmorConfig.hostConfig["Shield Fall Damage"]))
+                if (!bool.Parse(ArmorConfig.hostConfig["Shield Fall Damage"]))
                 {
                     // If shielding fall damage is disabled, we can just return here and let the original method handle it.
-                    LethalArmorsPlugin.Log.LogDebug("Shielding fall damage is disabled. Skipping damage reduction.");
+                    LethalArmorsPlugin.Log.LogInfo("Shielding fall damage is disabled. Skipping damage reduction.");
                     return true;
                 }
+
+                LethalArmorsPlugin.Log.LogInfo("Shielding fall damage is enabled. Reducing damage by armor.");
             }
 
+            LethalArmorsPlugin.Log.LogInfo("Calculating damage reduction from armor.");
             damage = playersArmor.TakeDamage(damage);
 
             // Evaluate if there is remaining damage, otherwise set to 0
@@ -96,12 +103,12 @@ namespace LethalArmors.Patches
         public static bool KillPlayerWithArmor(PlayerControllerB __instance)
         {
 
-            LethalArmorsPlugin.Log.LogDebug("Entered KillPlayerWithArmor()");
+            LethalArmorsPlugin.Log.LogInfo("Entered KillPlayerWithArmor()");
 
             if (!bool.Parse(ArmorConfig.hostConfig["Super Armor Enabled"]))
             {
                 // If super armor is disabled, we can just return here and let the original method handle it.
-                LethalArmorsPlugin.Log.LogDebug("Super Armor is disabled. Skipping super armor check.");
+                LethalArmorsPlugin.Log.LogInfo("Super Armor is disabled. Skipping super armor check.");
                 return true;
             }
 
@@ -116,12 +123,12 @@ namespace LethalArmors.Patches
             if (playersArmor.GetSuperPlateCount() <= 0) {
                 
                 // If the player has no super armor, we can just return here and let the original method handle it.
-                LethalArmorsPlugin.Log.LogDebug("Player has no super armor. Resuming kill command.");
+                LethalArmorsPlugin.Log.LogInfo("Player has no super armor. Resuming kill command.");
                 return true;
             }
 
             // If the player has super armor, we decrement it
-            LethalArmorsPlugin.Log.LogDebug("Player has super armor. Skipping kill command.");
+            LethalArmorsPlugin.Log.LogInfo("Player has super armor. Skipping kill command.");
             playersArmor.BreakArmorPlate(ArmorType.Super);
 
             // returning false will skip the original method call

@@ -22,19 +22,19 @@ namespace LethalArmors.Armor
 
         public ArmorPlate(ArmorType armorType)
         {
-            LethalArmorsPlugin.Log.LogDebug($"Creating new Armor Plate of type {armorType}");
+            LethalArmorsPlugin.Log.LogInfo($"Creating new Armor Plate of type {armorType}");
 
             if (armorType == ArmorType.Regular)
             {
                 Health = int.Parse(ArmorConfig.hostConfig["Regular Armor Health"]);
                 plateType = ArmorType.Regular;
-                LethalArmorsPlugin.Log.LogDebug($"Created new Regular Plate with {Health} health");
+                LethalArmorsPlugin.Log.LogInfo($"Created new Regular Plate with {Health} health");
             }
             else if (armorType == ArmorType.Super)
             {
                 Health = -1;
                 plateType = ArmorType.Super;
-                LethalArmorsPlugin.Log.LogDebug("Created new Super Plate");
+                LethalArmorsPlugin.Log.LogInfo("Created new Super Plate");
             }
         }
 
@@ -79,21 +79,21 @@ namespace LethalArmors.Armor
         {
             ArmorPlate armorPlate = new ArmorPlate(ArmorType.Regular);
             armorPlates[ArmorType.Regular].Add(armorPlate);
-            LethalArmorsPlugin.Log.LogDebug($"Added Regular Armor Plate.");
+            LethalArmorsPlugin.Log.LogInfo($"Added Regular Armor Plate.");
         }
 
         public void AddSuperArmorPlate()
         {
             ArmorPlate armorPlate = new ArmorPlate(ArmorType.Super);
             armorPlates[ArmorType.Super].Add(armorPlate);
-            LethalArmorsPlugin.Log.LogDebug($"Added Super Armor Plate.");
+            LethalArmorsPlugin.Log.LogInfo($"Added Super Armor Plate.");
         }
 
         public void BreakArmorPlate(ArmorType armorType)
         {
             if (armorPlates[armorType].Count > 0)
             {
-                LethalArmorsPlugin.Log.LogDebug($"Removing armor plate of type {armorType}.");
+                LethalArmorsPlugin.Log.LogInfo($"Removing armor plate of type {armorType}.");
                 armorPlates[armorType].RemoveAt(0);
             }
 
@@ -111,6 +111,7 @@ namespace LethalArmors.Armor
 
         public int TakeDamage(int damage)
         {
+            LethalArmorsPlugin.Log.LogInfo("Entered TakeDamage() in ArmorBase.cs[114]");
 
             // Iterate through all of the armor plates and take damage until the damage is gone or the armor is gone.
             // For potential future plateType expansion, we'll iterate through the types starting with regular when calculating damage mitigation.
@@ -147,10 +148,13 @@ namespace LethalArmors.Armor
         {
 
             // Check whether the player starts with regular armor plates
+            LethalArmorsPlugin.Log.LogInfo("Checking whether player starts with regular plates.");
             if (bool.Parse(ArmorConfig.hostConfig["Start With Regular Plates"]))
             {
+                LethalArmorsPlugin.Log.LogInfo($"Start With Regular Plates is '{ArmorConfig.hostConfig["Start With Regular Plates"]}'");
                 // If so, add the number of plates specified in the config
                 int regularPlateCount = int.Parse(ArmorConfig.hostConfig["Regular Plate Start Count"]);
+                LethalArmorsPlugin.Log.LogInfo($"Adding {regularPlateCount} regular plates.");
                 for (int i = 0; i < regularPlateCount; i++)
                 {
                     AddRegularArmorPlate();
@@ -158,10 +162,14 @@ namespace LethalArmors.Armor
             }
 
             // Check whether the player starts with super armor plates
-            if (bool.Parse(ArmorConfig.hostConfig["Start With Super Plates"]))
+            LethalArmorsPlugin.Log.LogInfo("Checking whether player starts with super plates.");
+            if (bool.Parse(ArmorConfig.hostConfig["Start With Super Armor Plates"]))
             {
+                LethalArmorsPlugin.Log.LogInfo($"Start With Super Armor Plates is '{ArmorConfig.hostConfig["Start With Super Armor Plates"]}'");
+
                 // If so, add the number of plates specified in the config
-                int superPlateCount = int.Parse(ArmorConfig.hostConfig["Super Plate Start Count"]);
+                int superPlateCount = int.Parse(ArmorConfig.hostConfig["Super Armor Plate Start Count"]);
+                LethalArmorsPlugin.Log.LogInfo($"Adding {superPlateCount} super plates.");
                 for (int i = 0; i < superPlateCount; i++)
                 {
                     AddSuperArmorPlate();
