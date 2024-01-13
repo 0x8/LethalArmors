@@ -8,6 +8,9 @@ using GameNetcodeStuff;
 using HarmonyLib;
 using Unity.Netcode;
 
+using LethalArmors;
+using LethalArmors.Armor;
+
 /* 
     
     [The Basic Idea]:
@@ -54,7 +57,7 @@ namespace LethalArmors.Patches
             // Pull the damage number value into a local variable so we can modify it without messing with the original value.
             int damage = damageNumber;
 
-            PlayerArmor playersArmor = LethalArmors.LC_ARMOR.GetPlayerArmors(__instance.playerSteamId);
+            PlayerArmor playersArmor = LethalArmors.LethalArmorNetworkHandler.Instance.playerArmor;
             if(playersArmor == null)
             {
                 // No armor, No damage reduction. Just return.
@@ -65,7 +68,7 @@ namespace LethalArmors.Patches
             if (fallDamage)
             {
                 // Check if shielding fall damage is enabled in the config
-                if (!LethalArmorsPlugin.Config.shieldFalls)
+                if (bool.Parse(ArmorConfig.hostConfig["Shield Fall Damage"]))
                 {
                     // If shielding fall damage is disabled, we can just return here and let the original method handle it.
                     LethalArmorsPlugin.Log.LogDebug("Shielding fall damage is disabled. Skipping damage reduction.");
@@ -95,14 +98,14 @@ namespace LethalArmors.Patches
 
             LethalArmorsPlugin.Log.LogDebug("Entered KillPlayerWithArmor()");
 
-            if(!LethalArmorsPlugin.Config.superArmor)
+            if (!bool.Parse(ArmorConfig.hostConfig["Super Armor Enabled"]))
             {
                 // If super armor is disabled, we can just return here and let the original method handle it.
                 LethalArmorsPlugin.Log.LogDebug("Super Armor is disabled. Skipping super armor check.");
                 return true;
             }
 
-            PlayerArmor playersArmor = LethalArmors.LC_ARMOR.GetPlayerArmors(__instance.playerSteamId);
+            PlayerArmor playersArmor = LethalArmors.LethalArmorNetworkHandler.Instance.playerArmor;
             if (playersArmor == null)
             {
                 // No armor, No damage reduction. Just return.
@@ -138,9 +141,9 @@ namespace LethalArmors.Patches
             ulong playerSteamId = __instance.playerSteamId;
 
             // Initialize the player's armor values based on the config
-            LethalArmorsPlugin.Log.LogInfo($"Initializing armor values for player SteamId: {playerSteamId}");
-            LC_ARMOR.InitializeArmorsFromConfig(playerSteamId);
-            LethalArmorsPlugin.Log.LogInfo($"Finished initializing player SteamId: {playerSteamId}");
+            // When we add the RPCs to sync the config, we'll actually run the instantiation from said configs there.
+            // As such, there isn't really a need to do anything here so...
+            // TODO: Revisit this when I un-fuck the rest of the code base
         }
     }
 

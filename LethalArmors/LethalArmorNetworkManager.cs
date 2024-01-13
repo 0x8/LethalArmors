@@ -15,15 +15,37 @@ namespace LethalArmors
     [HarmonyPatch]
     internal class LethalArmorNetworkManager
     {
+        public static GameObject armorNetworkObject;
+        public static LethalArmorNetworkHandler armorInstance;
+
         [HarmonyPostfix]
         [HarmonyPatch(typeof(GameNetworkManager), "Start")]
         public static void Init()
         {
-            //DEBUG
-            LethalArmorsPlugin.Log.LogInfo("Entered LethalArmorNetworkManager.Init()");
-            LethalArmors.LC_ARMOR PlayerArmors = new();
-            PlayerArmors.Start();
+            LethalArmorsPlugin.Log.LogDebug("Entered LethalArmorNetworkManager.Init()");
+            
+            // Check whether the network object is already instantiated
+            if(armorNetworkObject != null)
+                return;
+
+            LethalArmorsPlugin.Log.LogDebug("armorNetworkObject is null, instantiating...");
+            armorNetworkObject = new GameObject("LethalArmorHandler");
+            armorNetworkObject.AddComponent<LethalArmorNetworkHandler>();
+            NetworkManager.Singleton.AddNetworkPrefab(armorNetworkObject);
+            
         }
 
+        [HarmonyPostfix]
+        [HarmonyPatch(typeof(StartOfRound), "Awake")]
+        static void SpawnNetworkHnadler()
+        {
+            if (NetworkManager.Singleton.IsHost || NetworkManager.Singleton.IsServer)
+            {
+                var networkHandlerHost = UnityEngine.Object.Instantiate(armorNetworkObject, Vector3.zero, Quaternion.identity);
+                networkHandlerHost.GetComponent<NetworkObject>().Spawn();
+                armorInstance = networkHandlerHost.GetComponent<LethalArmorNetworkHandler>();
+                LethalArmorsPlugin.Log.LogInfo("Inialized the LethalArmorNetworkHandler.");
+            }
+        }
     }
 }

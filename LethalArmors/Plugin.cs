@@ -19,13 +19,14 @@ using UnityEngine.Networking;
 namespace LethalArmors
 {
     [BepInPlugin(modGUID, modName, modVersion)]
+    [BepInDependency(LethalLib.Plugin.ModGUID)]
     internal class LethalArmorsPlugin : BaseUnityPlugin
     {
         // Mod metadate, GUID must be unique
         private const String modGUID = "kinou.LethalArmors";
         private const String modName = "Lethal Armors";
         private const String modVersion = "1.0.0";
-        public static new Config Config { get; private set; }
+        public static AssetBundle armorBundle;
 
         // Logger and Instance information
         internal static ManualLogSource Log;
@@ -36,20 +37,36 @@ namespace LethalArmors
 
         private void Awake()
         {
-           Log = Logger;
-           Log.LogInfo("Entered Awake()");
+            Log = Logger;
+            Log.LogDebug("Entered Awake()");
+            Log.LogDebug("About to call LoadAssetBundle()");
+            armorBundle = AssetBundle.LoadFromMemory(LethalArmors.Properties.Resources.lethalarmors);
+            Log.LogDebug("Finished calling LoadAssetBundle()");
 
-           // Verify whether the instance exists, create a new one if not.
-           if (Instance == null)
-           {
-               Instance = this;
-           }
+            // Verify whether the instance exists, create a new one if not.
+            if (Instance == null)
+            {
+                Instance = this;
+            }
 
-           Log.LogInfo("Passed Instance Check, trying to generate config...");
+            Log.LogDebug("Passed Instance Check, trying to generate config...");
 
-           Config = new(base.Config);
+            // Evaisa's netcode patch stuff
+            var types = Assembly.GetExecutingAssembly().GetTypes();
+            foreach (var type in types)
+            {
+                var methods = type.GetMethods(BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.Static);
+                foreach (var method in methods)
+                {
+                    var attributes = method.GetCustomAttributes(typeof(RuntimeInitializeOnLoadMethodAttribute), false);
+                    if (attributes.Length > 0)
+                    {
+                        method.Invoke(null, null);
+                    }
+                }
+            }
 
-           try
+            try
             {
                 harmony.PatchAll();
                 Log.LogInfo("Lethal Armors loaded.");
@@ -59,6 +76,31 @@ namespace LethalArmors
                 Log.LogError("Failed to load Lethal Armors");
                 Log.LogError(e);
             }
+
+            ArmorConfig.InitConfig();
+
+        }
+
+
+        // Config Stuff (Shamelessly stolen from Stoneman because the wiki is outdated, complicated, and wrong at this moment)
+        public void BindConfig<T>(string section, string key, T defaultValue, string description = "")
+        {
+            Config.Bind(
+                section, 
+                key, 
+                defaultValue,
+                description
+            );
+        }
+
+        public IDictionary<string, string> GetAllConfigEntries()
+        {
+            IDictionary<string, string> localConfig = Config.GetConfigEntries().ToDictionary(
+                entry => entry.Definition.Key,
+                entry => entry.GetSerializedValue()
+            );
+        
+            return localConfig;
         }
 
     }

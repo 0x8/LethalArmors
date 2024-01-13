@@ -13,63 +13,43 @@ using Unity.Netcode;
 
 namespace LethalArmors
 {
-    public class Config
+    public class ArmorConfig
     {
-        // Config Entry refs
-        public ConfigEntry<int> armorValueConfig;
-        public ConfigEntry<int> armorCostConfig;
-        public ConfigEntry<bool> shieldFallsConfig;
-        public ConfigEntry<bool> superArmorConfig;
-        public ConfigEntry<int> superArmorCostConfig;
-        public ConfigEntry<bool> startWithRegularPlatesConfig;
-        public ConfigEntry<int> regularPlateStartCountConfig;
-        public ConfigEntry<bool> startWithSuperArmorPlatesConfig;
-        public ConfigEntry<int> superArmorPlateStartCountConfig;
+        // Holds local players config
+        public static IDictionary<string, string> hostConfig = new Dictionary<string, string>();
 
-        public int armorValue { get; private set;}
-        public int armorCost { get; private set; } 
-        public bool shieldFalls { get; private set; }
-        public bool superArmor { get; private set; }
-        public int superArmorCost { get; private set; }
-
-        // DEBUG options for quick testing mostly
-        public bool startWithRegularPlates { get; private set; }
-        public int regularPlateStartCount { get; private set; }
-        public bool startWithSuperArmorPlates { get; private set; }
-        public int superArmorPlateStartCount { get; private set; }
-
-        public Config(ConfigFile cfg)
+        public static void InitConfig()
         {
             // GENERAL OPTIONS
-            armorValueConfig = cfg.Bind(
+            LethalArmorsPlugin.Instance.BindConfig<int>(
                 "General",
-                "Armor Value",
+                "Regular Armor Health",
                 25,
-                "How much health each piece of armor should have"
+                "How much health each piece of regular armor should have"
             );
 
-            armorCostConfig = cfg.Bind(
+            LethalArmorsPlugin.Instance.BindConfig<int>(
                 "General",
-                "Armor Piece Cost",
+                "Regular Armor Cost",
                 75,
-                "How much each piece of armor should cost."
+                "How much each piece of regular armor should cost."
             );
 
-            shieldFallsConfig = cfg.Bind(
+            LethalArmorsPlugin.Instance.BindConfig<bool>(
                 "General",
                 "Shield Fall Damage",
                 false,
                 "Whether or not armor should absorb fall damage."
             );
 
-            superArmorConfig = cfg.Bind(
+            LethalArmorsPlugin.Instance.BindConfig<bool>(
                 "General",
-                "Super Armor",
+                "Super Armor Enabled",
                 false,
                 "Whether or not the player should be able to buy Super Armor plates. Each plate prevents one instance of instant kill mechanic."
             );
 
-            superArmorCostConfig = cfg.Bind(
+            LethalArmorsPlugin.Instance.BindConfig<int>(
                 "General",
                 "Super Armor Cost",
                 100,
@@ -77,44 +57,33 @@ namespace LethalArmors
             );
 
             // DEBUG OPTIONS
-            startWithRegularPlatesConfig = cfg.Bind(
+            LethalArmorsPlugin.Instance.BindConfig<bool>(
                 "Debug",
                 "Start With Regular Plates",
                 false,
                 "Whether or not the player should start with regular armor plates."
             );
 
-            regularPlateStartCountConfig = cfg.Bind(
+            LethalArmorsPlugin.Instance.BindConfig<int>(
                 "Debug",
                 "Regular Plate Start Count",
                 4,
                 "How many regular armor plates the player should start with."
             );
 
-            startWithSuperArmorPlatesConfig = cfg.Bind(
+            LethalArmorsPlugin.Instance.BindConfig<bool>(
                 "Debug",
                 "Start With Super Armor Plates",
                 false,
                 "Whether or not the player should start with super armor plates."
             );
 
-            superArmorPlateStartCountConfig = cfg.Bind(
+            LethalArmorsPlugin.Instance.BindConfig<int>(
                 "Debug",
                 "Super Armor Plate Start Count",
                 1,
                 "How many super armor plates the player should start with."
             );
-
-            // Assign values from ConfigEntries
-            armorValue = armorValueConfig.Value;
-            armorCost = armorCostConfig.Value;
-            shieldFalls = shieldFallsConfig.Value;
-            superArmor = superArmorConfig.Value;
-            superArmorCost = superArmorCostConfig.Value;
-            startWithRegularPlates = startWithRegularPlatesConfig.Value;
-            regularPlateStartCount = regularPlateStartCountConfig.Value;
-            startWithSuperArmorPlates = startWithSuperArmorPlatesConfig.Value;
-            superArmorPlateStartCount = superArmorPlateStartCountConfig.Value;
 
         }
 
