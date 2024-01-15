@@ -20,7 +20,6 @@ using UnityEngine.Networking;
 namespace LethalArmors
 {
     [BepInPlugin(modGUID, modName, modVersion)]
-    [BepInDependency(LethalLib.Plugin.ModGUID)]
     internal class LethalArmorsPlugin : BaseUnityPlugin
     {
         // Mod metadate, GUID must be unique
@@ -38,38 +37,20 @@ namespace LethalArmors
 
         private void Awake()
         {
-            
-            Log = Logger;
-            Log.LogInfo("Entered Awake()");
-            Log.LogInfo("About to call LoadAssetBundle()");
-            //armorBundle = AssetBundle.LoadFromMemory(LethalArmors.Properties.Resources.lethalarmors);
-            armorBundle = AssetBundle.LoadFromFile(Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location), "lethalarmors"));
-            Log.LogInfo("Finished calling LoadAssetBundle()");
 
-            //NetcodePatcher();
+            Log = Logger;
+            Log.LogDebug("Called Awake() in Plugin.cs");
+
+            armorBundle = AssetBundle.LoadFromFile(Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location), "lethalarmors"));
+            Log.LogInfo("Loaded AssetBundle.");
+
+            NetcodePatcher();
 
             // Verify whether the instance exists, create a new one if not.
             if (Instance == null)
             {
                 Instance = this;
             }
-
-            Log.LogInfo("Passed Instance Check, trying to generate config...");
-
-            //// Evaisa's netcode patch stuff
-            //var types = Assembly.GetExecutingAssembly().GetTypes();
-            //foreach (var type in types)
-            //{
-            //    var methods = type.GetMethods(BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.Static);
-            //    foreach (var method in methods)
-            //    {
-            //        var attributes = method.GetCustomAttributes(typeof(RuntimeInitializeOnLoadMethodAttribute), false);
-            //        if (attributes.Length > 0)
-            //        {
-            //            method.Invoke(null, null);
-            //        }
-            //    }
-            //}
 
             try
             {
@@ -82,8 +63,9 @@ namespace LethalArmors
                 Log.LogError(e);
             }
 
+            Log.LogInfo("Attemtping to load config.");
             ArmorConfig.InitConfig();
-
+            Log.LogInfo("Config loaded.");
         }
 
         private static void NetcodePatcher()
@@ -103,7 +85,9 @@ namespace LethalArmors
             }
         }
 
-        // Config Stuff (Shamelessly stolen from Stoneman because the wiki is outdated, complicated, and wrong at this moment)
+
+        // Config Stuff
+        // Will replace this with DataContracts once I actually figure out how to use them.
         public void BindConfig<T>(string section, string key, T defaultValue, string description = "")
         {
             Config.Bind(
