@@ -5,11 +5,9 @@ using System.Text;
 using System.Threading.Tasks;
 using Unity.Netcode;
 
-// External Refs
 using HarmonyLib;
 using UnityEngine;
 
-// FIXME: We may not need this at all? I'll try to figure it out.
 namespace LethalArmors
 {
     [HarmonyPatch]
@@ -22,13 +20,13 @@ namespace LethalArmors
         [HarmonyPatch(typeof(GameNetworkManager), "Start")]
         public static void Init()
         {
-            LethalArmorsPlugin.Log.LogInfo("Entered LethalArmorNetworkManager.Init()");
+            LethalArmorsPlugin.Log.LogDebug("Entered LethalArmorNetworkManager.Init()");
             
             // Check whether the network object is already instantiated
             if(armorNetworkObject != null)
                 return;
 
-            LethalArmorsPlugin.Log.LogInfo("armorNetworkObject is null, instantiating...");
+            LethalArmorsPlugin.Log.LogDebug("armorNetworkObject is null, instantiating...");
             armorNetworkObject =  (GameObject)LethalArmorsPlugin.armorBundle.LoadAsset("LethalArmorHandler");
             armorNetworkObject.AddComponent<LethalArmorNetworkHandler>();
             NetworkManager.Singleton.AddNetworkPrefab(armorNetworkObject);

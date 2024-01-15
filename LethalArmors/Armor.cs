@@ -53,15 +53,15 @@ namespace LethalArmors
         [ServerRpc(RequireOwnership = false)]
         public void PlayerConnect_ServerRpc()
         {
-            // Does this run when a player connects?
-            LethalArmorsPlugin.Log.LogInfo("PlayerConnect_ServerRpc called");
+
+            LethalArmorsPlugin.Log.LogDebug("PlayerConnect_ServerRpc called in Armor.cs");
             IDictionary<string, string> playerConfigs = LethalArmorsPlugin.Instance.GetAllConfigEntries();
-            LethalArmorsPlugin.Log.LogInfo($"Loaded playerConfigs: {playerConfigs}");
             string serializedConfig = JsonConvert.SerializeObject(playerConfigs);
-            // DEBUG because I'm desperate
+            
+            // Debug logs for configs
             foreach(KeyValuePair<string, string> entry in playerConfigs)
             {
-                LethalArmorsPlugin.Log.LogInfo($"Added {entry.Key}: {entry.Value} to playerConfigs");
+                LethalArmorsPlugin.Log.LogDebug($"Added {entry.Key}: {entry.Value} to playerConfigs.");
             }
 
             SendConfigsClientRpc(serializedConfig);
@@ -70,17 +70,20 @@ namespace LethalArmors
         [ClientRpc]
         public void SendConfigsClientRpc(string serializedConfig)
         {
+            LethalArmorsPlugin.Log.LogDebug("Called SendConfigsClientRpc() in Armor.cs.");
 
             IDictionary<string, string> playerConfigs = JsonConvert.DeserializeObject<IDictionary<string, string>>(serializedConfig);
             foreach (KeyValuePair<string, string> entry in playerConfigs)
             {
                 ArmorConfig.hostConfig[entry.Key] = entry.Value;
-                LethalArmorsPlugin.Log.LogInfo($"Added {entry.Key}: {entry.Value} to hostConfig");
+                LethalArmorsPlugin.Log.LogInfo($"Added {entry.Key}: {entry.Value} to hostConfig.");
             }
 
             // Is this object Initialized Already?
             if (!Initialized)
             {
+                LethalArmorsPlugin.Log.LogInfo("playerArmor is not initialized, initializing...");
+
                 Initialized = true;
                 LethalArmorNetworkManager.armorInstance = this;
                 playerArmor = new PlayerArmor();
